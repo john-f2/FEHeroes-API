@@ -54,7 +54,7 @@ heroes = [
 		'passives':{'A':['Speed +1', 'Speed +2', 'Speed +3'], 'B':[],
 		'C':['Fortify Res 1','Fortify Res 2', 'Fortify Res 3']},
 		'stats': {'lvl_1':{'HP':[16,17,18],'ATK':[4,5,6],'SPD':[6,7,8],'DEF':[3,4,5],'RES':[5,6,7]},
-		'lvl_40':{'HP':[33,36,40],'ATK':[28,31,34],'SPD':[30,33,36],'DEF':[18,21,24],'RES':[24,28,31]}},
+			'lvl_40':{'HP':[33,36,40],'ATK':[28,31,34],'SPD':[30,33,36],'DEF':[18,21,24],'RES':[24,28,31]}},
 		'growth_points':{'HP':5,'ATK':8,'SPD':8,'DEF':4,'RES':6}
 
 
@@ -72,6 +72,7 @@ weapons = [
 		'might': 6,
 		'range': 1,
 		'sp_cost': 50,
+		'is_inheritable' : True,
 		'heroes': ['Lucina: Future Witness']
 
 	},
@@ -81,11 +82,11 @@ weapons = [
 		'description':'Effective against dragon foes. At the start of every third turn, restores 10 HP.',
 		'effective':['dragon'],
 		'upgrade':{'S1':{'stat':['+3 HP'], 'description':'If unit is adjacent to an ally, grants Atk/Spd/Def/Res+4 during combat.', 'cost':{'SP':400, 'medal': 500, 'dew':200}},
-		'atk':{'stat':['+5 HP','+2 Mt'], 'description':'', 'cost':{'SP':400, 'medal': 500, 'dew':200}},
-		'spd':{'stat':['+5 HP','+3 Spd'], 'description':'', 'cost':{'SP':400, 'medal': 500, 'dew':200}},
-		'def':{'stat':['+5 HP','+4 Def'], 'description':'', 'cost':{'SP':400, 'medal': 500, 'dew':200}},
-		'res':{'stat':['+5 HP','+4 Res'], 'description':'', 'cost':{'SP':400, 'medal': 500, 'dew':200}}},
-		'might': 16,
+			'atk':{'stat':['+5 HP','+2 Mt'], 'description':'', 'cost':{'SP':400, 'medal': 500, 'dew':200}},
+			'spd':{'stat':['+5 HP','+3 Spd'], 'description':'', 'cost':{'SP':400, 'medal': 500, 'dew':200}},
+			'def':{'stat':['+5 HP','+4 Def'], 'description':'', 'cost':{'SP':400, 'medal': 500, 'dew':200}},
+			'res':{'stat':['+5 HP','+4 Res'], 'description':'', 'cost':{'SP':400, 'medal': 500, 'dew':200}}},
+			'might': 16,
 		'range': 1,
 		'sp_cost': 400,
 		'is_inheritable':False,
@@ -101,6 +102,7 @@ weapons = [
 		'might': 6,
 		'range': 1,
 		'sp_cost': 50,
+		'is_inheritable' : True,
 		'heroes': ['Azura: Lady of the Lake']
 
 	}
@@ -113,8 +115,8 @@ skills = [
 		'name': 'Defiant Spd',
 		'type': 'A',
 		'varients': {'1': {'SP':40, 'description':'At start of turn, if unit\'s HP <= 50%, grants Spd+3 for 1 turn'},
-		'2':{'SP':80, 'description':'At start of turn, if unit\'s HP <= 50%, grants Spd+5 for 1 turn'},
-		'3':{'SP':160, 'description':'At start of turn, if unit\'s HP <= 50%, grants Spd+7 for 1 turn'}},
+			'2':{'SP':80, 'description':'At start of turn, if unit\'s HP <= 50%, grants Spd+5 for 1 turn'},
+			'3':{'SP':160, 'description':'At start of turn, if unit\'s HP <= 50%, grants Spd+7 for 1 turn'}},
 		'heroes':['Lucina: Future Witness']
 	},
 	{
@@ -123,8 +125,8 @@ skills = [
 		'type': 'C',
 		'is_seal_avaliable':True,
 		'varients': {'1': {'SP':50, 'description':'At start of turn, grants Res+2 to adjacent allies for 1 turn.'},
-		'2':{'SP':100, 'description':'At start of turn, grants Res+3 to adjacent allies for 1 turn.'},
-		'3':{'SP':200, 'description':'At start of turn, grants Res+4 to adjacent allies for 1 turn.'}},
+			'2':{'SP':100, 'description':'At start of turn, grants Res+3 to adjacent allies for 1 turn.'},
+			'3':{'SP':200, 'description':'At start of turn, grants Res+4 to adjacent allies for 1 turn.'}},
 		'heroes':['Azura: Lady of the Lake']
 	},
 
@@ -169,7 +171,9 @@ def index():
 	return 'Fire Emblem Heroes API'
 
 
+#######################
 ''' GET FUNCTIONS '''
+#######################
 
 @app.route('/feh/api/v1.0/heroes', methods=['GET'])
 def get_all_heroes():
@@ -249,7 +253,73 @@ def get_special(special_id):
 
 
 
+########################
+''' POST FUNCTIONS ''' 
+########################
+
+
+@app.route('/feh/api/v1.0/heroes', methods=['POST'])
+def add_hero():
+	''' Adds a new hero to the database '''
+
+	#if the reqest is not in json format or does not have a 'name' value
+	#then abort 
+	if not request.json or not 'name' in request.json:
+		abort(404)
+	new_hero = {
+		'id' : heroes[-1]['id'] + 1,
+		'name': request.json['name'],
+		'description': request.json.get('description', ""), 
+		'rarities': request.json.get('rarities', ""),
+		'w_type': request.json.get('w_type', ""),
+		'm_type': request.json.get('m_type', ""),
+		'weapons': request.json.get('weapons', ""),
+		'assists': request.json.get('assists', ""),
+		'specials': request.json.get('specials', ""),
+		'passives': request.json.get('passives', "") ,
+		'stats': request.json.get('stats', "") ,
+		'growth_points': request.json.get('growth_points', "")
+
+	}
+
+	heroes.append(new_hero)
+
+	#returns back the json of the new hero and a 201 status code meaning "created"
+	return jsonify({'Added Hero': new_hero}), 201
+
+
+@app.route('/feh/api/v1.0/weapons', methods=['POST'])
+def add_weapon():
+	''' Adds a new weapon to the database '''
+
+	if not request.json or not 'name' in request.json:
+		abort(404)
+
+	new_weapon = {
+		'id': weapons[-1]['id'] + 1,
+		'name' : request.json['name'],
+		'description': request.json.get('description', ""),
+		'effective': request.json.get('effective', ""),
+		'upgrade': request.json.get('upgrade', ""),
+		'might': request.json.get('might', ""),
+		'range': request.json.get('range', ""),
+		'sp_cost': request.json.get('sp_cost', ""),
+		'is_inheritable' : request.json.get('is_inheritable', ""),
+		'heroes': request.json.get('heroes', "")
+
+	}
+
+	weapons.append(new_weapon)
+	
+	return jsonify({'Added Weapon':new_weapon})
+
+
+
+
+
+##########################
 ''' DELETE FUNCTIONS '''
+##########################
 
 ''' example curl function call 
 curl -X "DELETE" http://127.0.0.1:5000/feh/api/v1.0/heroes/1
@@ -282,6 +352,26 @@ def delete_skill(skill_id):
 		abort(404)
 	skills.remove(skill[0])
 	return jsonify({'Result':'True'})
+
+
+@app.route('/feh/api/v1.0/assists/<int:assist_id>', methods=['DELETE'])
+def delete_assist(assist_id):
+	''' Remove assist matching specified id '''
+	assist = [assist for assist in assists if assist['id'] == assist_id]
+	if len(assist) == 0:
+		abort(404)
+	assist.remove(assist[0])
+	return jsonify({'Result':True})
+
+@app.route('/feh/api/v1.0/specials/<int:special_id>', methods=['DELETE'])
+def delete_special(special_id):
+	''' Remove special matching specified id '''
+	special = [special for special in specials if special['id'] == special_id]
+	if len(special) == 0:
+		abort(404)
+	speials.remove(special[0])
+	return jsonify({'Result':True})
+
 
 
 
