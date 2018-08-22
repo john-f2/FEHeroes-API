@@ -114,6 +114,7 @@ skills = [
 		'id': 1,
 		'name': 'Defiant Spd',
 		'type': 'A',
+		'is_seal_avaliable' : True,
 		'varients': {'1': {'SP':40, 'description':'At start of turn, if unit\'s HP <= 50%, grants Spd+3 for 1 turn'},
 			'2':{'SP':80, 'description':'At start of turn, if unit\'s HP <= 50%, grants Spd+5 for 1 turn'},
 			'3':{'SP':160, 'description':'At start of turn, if unit\'s HP <= 50%, grants Spd+7 for 1 turn'}},
@@ -312,6 +313,75 @@ def add_weapon():
 	weapons.append(new_weapon)
 	
 	return jsonify({'Added Weapon':new_weapon})
+
+
+@app.route('/feh/api/v1.0/skills', methods=['POST'])
+def add_skill():
+	''' Add a new skill to the database '''
+
+	if not request.json or not 'name' in request.json:
+		abort(404)
+
+	new_skill = {
+		'id' : skills[-1]['id'] + 1,
+		'name' : request.json['name'],
+		'type': request.json.get('type'),
+		'is_seal_avaliable':request.json.get('is_seal_avaliable'),
+		'varients': request.json.get('varients'),
+		'heroes':request.json.get('heroes')
+
+	}
+
+	skills.append(new_skill)
+
+	return jsonify({'Added Skill':new_skill})
+
+
+@app.route('/feh/api/v1.0/assists', methods=['POST'])
+def add_assist():
+	''' Add a new assist to the database '''
+
+	if not request.json or not 'name' in request.json:
+		abort(404)
+
+	new_assist = {
+		'id': assists[-1]['id'] + 1,
+		'name' : request.json['name'],
+		'range':request.json.get('range'),
+		'sp_cost':request.json.get('sp_cost'),
+		'description': request.json.get('description'),
+		'is_inheritable':request.json.get('is_inheritable'),
+		'restriction': request.json.get('restriction'),
+		'heroes':request.json.get('heroes')
+
+	}
+
+	assists.append(new_assist)
+
+	return jsonify({'Added Assist': new_assist})
+
+
+@app.route('/feh/api/v1.0/special', methods=['POST'])
+def add_special():
+	''' Add a new special to the database '''
+
+	if not request.json or not 'name' in request.json:
+		abort(404)
+
+	new_special = {
+		'id': specials[-1]['id'] +1,
+		'name': request.json['name'],
+		'cooldown': request.json.get('cooldown'),
+		'sp_cost': request.json.get('sp_cost'),
+		'description':request.json.get('description'),
+		'restriction': request.json.get('restriction'),
+		'heroes': request.json.get('heroes')
+
+	}
+
+	specials.append(new_special)
+
+	return jsonify({'Added Special' : new_special})
 
 
 
