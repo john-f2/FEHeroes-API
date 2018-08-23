@@ -361,7 +361,7 @@ def add_assist():
 	return jsonify({'Added Assist': new_assist})
 
 
-@app.route('/feh/api/v1.0/special', methods=['POST'])
+@app.route('/feh/api/v1.0/specials', methods=['POST'])
 def add_special():
 	''' Add a new special to the database '''
 
@@ -382,6 +382,141 @@ def add_special():
 	specials.append(new_special)
 
 	return jsonify({'Added Special' : new_special})
+
+
+
+##########################
+''' UPDATE FUNCTIONS '''
+##########################
+
+
+@app.route('/feh/api/v1.0/heroes/<int:hero_id>', methods=['PUT'])
+def update_hero(hero_id):
+	''' Updates specified hero's information, currently uses hero id, 
+	will probably change it to hero name later '''
+
+	#gets the hero matching parameter id 
+	hero = [hero for hero in heroes if hero['id'] == hero_id]
+
+	#checks if given data is in correct format 
+	if len(hero) == 0:
+		abort(404)
+	if not request.json:
+		abort(400)
+	if 'name' in request.json and type(request.json['name']) is not str:
+		abort(400)
+	if 'description' in request.json and type(request.json['description']) is not str:
+		abort(400)
+	if 'rarities' in request.json and type(request.json['rarities']) is not list:
+		abort(400)
+	if 'w_type' in request.json and type(request.json['w_type']) is not str:
+		abort(400)
+	if 'm_type' in request.json and type(request.json['m_type']) is not str:
+		abort(400)
+	if 'weapons' in request.json and type(request.json['weapons']) is not list:
+		abort(400)
+	if 'assists' in request.json and type(request.json['assists']) is not list:
+		abort(400)
+	if 'passives' in request.json and type(request.json['passives']) is not dict:
+		abort(400)
+	if 'stats' in request.json and type(request.json['stats']) is not dict:
+		abort(400)
+	if 'growth_points' in request.json and type(request.json['growth_points']) is not dict:
+		abort(400)
+
+	#sets the new hero's data to database
+	hero[0]['name'] = request.json.get('name', hero[0]['name'])
+	hero[0]['description'] = request.json.get('description', hero[0]['description'])
+	hero[0]['rarities'] = request.json.get('rarities', hero[0]['rarities'])
+	hero[0]['w_type'] = request.json.get('w_type', hero[0]['w_type'])
+	hero[0]['m_type'] = request.json.get('m_type', hero[0]['m_type'])
+	hero[0]['weapons'] = request.json.get('weapons', hero[0]['weapons'])
+	hero[0]['assists'] = request.json.get('assists', hero[0]['assists'])
+	hero[0]['passives'] = request.json.get('passives', hero[0]['passives'])
+	hero[0]['stats'] = request.json.get('stats', hero[0]['stats'])
+	hero[0]['growth_points'] = request.json.get('growth_points', hero[0]['growth_points'])
+
+	return jsonify({'Updated hero':hero[0] })
+
+
+@app.route('/feh/api/v1.0/weapons/<int:weapon_id>', methods=['PUT'])
+def update_weapon(weapon_id):
+	''' Updates specified weapon '''
+	weapon = [weapon for weapon in weapons if weapon['id'] == weapon_id]
+
+	#checks if given json is correct
+	if len(weapon) == 0:
+		abort(404)
+	if not request.json:
+		abort(400)
+	if 'name' in request.json and type(request.json['name']) is not str:
+		abort(400)
+	if 'description' in request.json and type(request.json['description']) is not str:
+		abort(400)
+	if 'effective' in request.json and type(request.json['effective']) is not list:
+		abort(400)
+	if 'upgrade' in request.json and type(request.json['upgrade']) is not dict:
+		abort(400)
+	if 'might' in request.json and type(request.json['might']) is not int:
+		abort(400)
+	if 'range' in request.json and type(request.json['range']) is not int:
+		abort(400)
+	if 'is_inheritable' in request.json and type(request.json['is_inheritable']) is not bool:
+		abort(400)
+	if 'sp_cost' in request.json and type(request.json['sp_cost']) is not int:
+		abort(400)
+	if 'heroes' in request.json and type(request.json['heroes']) is not list:
+		abort(400)
+
+	weapon[0]['name'] = request.json.get('name', weapon[0]['name'])
+	weapon[0]['description'] = request.json.get('description', weapon[0]['description'])
+	weapon[0]['effective'] = request.json.get('effective', weapon[0]['effective'])
+	weapon[0]['upgrade'] = request.json.get('upgrade', weapon[0]['upgrade'])
+	weapon[0]['might'] = request.json.get('might', weapon[0]['might'])
+	weapon[0]['is_inheritable'] = request.json.get('is_inheritable', weapon[0]['is_inheritable'])
+	weapon[0]['range'] = request.json.get('range', weapon[0]['range'])
+	weapon[0]['sp_cost'] = request.json.get('sp_cost', weapon[0]['sp_cost'])
+	weapon[0]['heroes'] = request.json.get('heroes', weapon[0]['heroes'])
+
+	return jsonify({"Updated hero":weapon[0]})
+
+
+@app.route('/feh/api/v1.0/skills/<int:skill_id>', methods=['PUT'])
+def update_skill(skill_id):
+	''' Updates specified skill '''
+
+	skill = [skill for skill in skills if skill['id'] == skill_id]
+	if len(skill) == 0:
+		abort(404)
+	if not request.json:
+		abort(400)
+	if 'name' in request.json and type(request.json['name']) is not str:
+		abort(400)
+	if 'type' in request.json and type(request.json['type']) is not str:
+		abort(400)
+	if 'is_seal_avaliable' in request.json and type(request.json['is_seal_avaliable']) is not bool:
+		abort(400)
+	if 'varients' in request.json and type(request.json['varients']) is not dict:
+		abort(400)
+	if 'heroes' in request.json and type(request.json['heroes']) is not list:
+		abort(400)
+
+	skill[0]['name'] = request.json.get('name', skill[0]['name'])
+	skill[0]['type'] = request.json.get('type', skill[0]['type'])
+	skill[0]['is_seal_avaliable'] = request.json.get('is_seal_avaliable', skill[0]['is_seal_avaliable'])
+	skill[0]['varients'] = request.json.get('varients', skill[0]['varients'])
+	skill[0]['heroes'] = request.json.get('heroes', skill[0]['heroes'])
+
+	return jsonify({'Updated Skill' : skill[0]})
+
+
+
+
+
+
+
+
+
 
 
 
