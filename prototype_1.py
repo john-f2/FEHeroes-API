@@ -8,6 +8,8 @@ Prototype 1 for Fire Emeblem Heroes API
 
 Focus - To set up the API and create a template for data model 
 
+chmod a+x <*.py> to give access on termianl
+
 
 @author john-f2
 
@@ -30,6 +32,7 @@ heroes = [
 		'rarities':[5],
 		'w_type':'Sword',
 		'm_type':'Infantry',
+		'origin': ' Fire Emblem Awakening',
 		'weapons':['Iron Sword','Steel Sword','Silver Sword','Falchion'],
 		'assists':[],
 		'specials':['New Moon', 'Luna', 'Aether'],
@@ -48,6 +51,7 @@ heroes = [
 		'rarities':[5],
 		'w_type':'Lance',
 		'm_type':'Infantry',
+		'origin': ' Fire Emblem Fates',
 		'weapons':['Iron Lance','Steel Lance','Sapphire Lance','Sapphire Lance+'],
 		'assists':['Sing'],
 		'specials':[],
@@ -413,6 +417,8 @@ def update_hero(hero_id):
 		abort(400)
 	if 'm_type' in request.json and type(request.json['m_type']) is not str:
 		abort(400)
+	if 'origin' in request.json and type(request.json['origin']) is not str:
+		abort(400)
 	if 'weapons' in request.json and type(request.json['weapons']) is not list:
 		abort(400)
 	if 'assists' in request.json and type(request.json['assists']) is not list:
@@ -430,6 +436,7 @@ def update_hero(hero_id):
 	hero[0]['rarities'] = request.json.get('rarities', hero[0]['rarities'])
 	hero[0]['w_type'] = request.json.get('w_type', hero[0]['w_type'])
 	hero[0]['m_type'] = request.json.get('m_type', hero[0]['m_type'])
+	hero[0]['origin'] = request.json.get('origin', hero[0]['origin'])
 	hero[0]['weapons'] = request.json.get('weapons', hero[0]['weapons'])
 	hero[0]['assists'] = request.json.get('assists', hero[0]['assists'])
 	hero[0]['passives'] = request.json.get('passives', hero[0]['passives'])
@@ -508,6 +515,77 @@ def update_skill(skill_id):
 	skill[0]['heroes'] = request.json.get('heroes', skill[0]['heroes'])
 
 	return jsonify({'Updated Skill' : skill[0]})
+
+
+@app.route('/feh/api/v1.0/assists/<int:assists_id>', methods=['PUT'])
+def update_assist(assists_id):
+	''' Updates specified assist '''
+
+	assist = [assist for assist in assists if assist['id'] == assists_id]
+	if len(assist) == 0:
+		abort(404)
+	if not request.json:
+		abort(400)
+	if 'name' in request.json and type(request.json['name']) is not str:
+		abort(400)
+	if 'range' in request.json and type(request.json['range']) is not int:
+		abort(400)
+	if 'sp_cost' in request.json and type(request.json['sp_cost']) is not int:
+		abort(400)
+	if 'description' in request.json and type(request.json['description']) is not str:
+		abort(400)
+	if 'is_inheritable' in request.json and type(request.json['is_inheritable']) is not bool:
+		abort(400)
+	if 'restriction' in request.json and type(request.json['restriction']) is not list:
+		abort(400)
+	if 'heroes' in request.json and type(request.json['heroes']) is not list:
+		abort(400)
+
+	assist[0]['name'] = request.json.get('name', assist[0]['name'])
+	assist[0]['range'] = request.json.get('range', assist[0]['range'])
+	assist[0]['sp_cost'] = request.json.get('sp_cost', assist[0]['sp_cost'])
+	assist[0]['description'] = request.json.get('description', assist[0]['description'])
+	assist[0]['is_inheritable'] = request.json.get('is_inheritable', assist[0]['is_inheritable'])
+	assist[0]['restriction'] = request.json.get('restriction', assist[0]['restriction'])
+	assist[0]['heroes'] = request.json.get('heroes', assist[0]['heroes'])
+
+	return jsonify({'Updated Assist' : assist[0]})
+
+@app.route('/feh/api/v1.0/specials/<int:special_id>', methods=['PUT'])
+def update_special(special_id):
+	''' Updates specified special '''
+	special = [special for special in specials if special['id'] == special_id]
+
+	if len(special) == 0:
+		abort(404)
+	if not request.json:
+		abort(400)
+	if 'name' in request.json and type(request.json['name']) is not str:
+		abort(400)
+	if 'cooldown' in request.json and type(request.json['cooldown']) is not int:
+		abort(400)
+	if 'sp_cost' in request.json and type(request.json['sp_cost']) is not int:
+		abort(400)
+	if 'description' in request.json and type(request.json['description']) is not str:
+		abort(400)
+	if 'restriction' in request.json and type(request.json['restriction']) is not list:
+		abort(400)
+	if 'heroes' in request.json and type(request.json['heroes']) is not list:
+		abort(400)
+
+	special[0]['name'] = request.json.get('name', special[0]['name'])
+	special[0]['cooldown'] = request.json.get('cooldown', special[0]['cooldown'])
+	special[0]['sp_cost'] = request.json.get('sp_cost', special[0]['sp_cost'])
+	special[0]['description'] = request.json.get('description', special[0]['description'])
+	special[0]['restriction'] = request.json.get('restriction', special[0]['restriction'])
+	special[0]['heroes'] = request.json.get('heroes', special[0]['heroes'])
+
+	return jsonify({'Updated Special' : special[0]})
+
+
+
+
+
 
 
 
