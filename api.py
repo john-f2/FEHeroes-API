@@ -29,7 +29,7 @@ def index():
 mongo_client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = mongo_client['feh_api']
 
-#collections 
+#collections
 heroes_col = db['heroes']
 weapons_col = db['weapons']
 skills_col = db['skills']
@@ -60,7 +60,7 @@ def get_hero(hero_id):
 	if len(find_hero) == 0:
 		#if id not found return 404 error
 		abort(404)
-	return jsonify({'heroes':find_hero}) 
+	return jsonify({'heroes':find_hero})
 
 
 @app.route('/feh/api/v1.0/weapons', methods=['GET'])
@@ -99,7 +99,7 @@ def get_all_assists():
 @app.route('/feh/api/v1.0/assists/<int:assist_id>', methods=['GET'])
 def get_assist(assist_id):
 	''' Returns a assist matching specified id '''
-	find_assist = list(assists_col.find({"_id":assist_id})) 
+	find_assist = list(assists_col.find({"_id":assist_id}))
 	if len(find_assist) == 0:
 		abort(404)
 	return jsonify({'assists':find_assist})
@@ -151,7 +151,7 @@ def add_hero():
 	''' Adds a new hero to the heroes collection '''
 
 	#if the reqest is not in json format or does not have a 'name' value
-	#then abort 
+	#then abort
 	if not request.json or not 'name' in request.json:
 		abort(404)
 
@@ -162,7 +162,7 @@ def add_hero():
 	new_hero = {
 		'_id' : next_id[0]['_id']+1,
 		'name': request.json['name'],
-		'description': request.json.get('description', ""), 
+		'description': request.json.get('description', ""),
 		'rarities': request.json.get('rarities', ""),
 		'w_type': request.json.get('w_type', ""),
 		'm_type': request.json.get('m_type', ""),
@@ -209,7 +209,7 @@ def add_weapon():
 	}
 
 	weapons_col.insert_one(new_weapon)
-	
+
 	return jsonify({'Added Weapon':new_weapon})
 
 
@@ -310,14 +310,186 @@ def add_accessory():
 	}
 
 
+#########################
+''' UPDATE FUNCTIONS '''
+#########################
+
+@app.route('/feh/api/v1.0/heroes/<int:hero_id>', methods=['PUT'])
+def update_hero(hero_id):
+	''' Updates specified hero's information, currently uses hero id,
+	will probably change it to hero name later '''
+
+
+	#checks if given data is in correct format
+	#TODO need to check if the item exists in database
+	# if len(hero) == 0:
+	# 	abort(404)
+	if not request.json:
+		abort(400)
+	if 'name' in request.json and type(request.json['name']) is not str:
+		abort(400)
+	if 'description' in request.json and type(request.json['description']) is not str:
+		abort(400)
+	if 'rarities' in request.json and type(request.json['rarities']) is not list:
+		abort(400)
+	if 'w_type' in request.json and type(request.json['w_type']) is not str:
+		abort(400)
+	if 'm_type' in request.json and type(request.json['m_type']) is not str:
+		abort(400)
+	if 'origin' in request.json and type(request.json['origin']) is not str:
+		abort(400)
+	if 'weapons' in request.json and type(request.json['weapons']) is not list:
+		abort(400)
+	if 'assists' in request.json and type(request.json['assists']) is not list:
+		abort(400)
+	if 'passives' in request.json and type(request.json['passives']) is not dict:
+		abort(400)
+	if 'stats' in request.json and type(request.json['stats']) is not dict:
+		abort(400)
+	if 'growth_points' in request.json and type(request.json['growth_points']) is not dict:
+		abort(400)
+
+	#sets the new hero's data to database
+
+
+	return jsonify({'Updated hero':hero[0] })
+
+@app.route('/feh/api/v1.0/weapons/<int:weapon_id>', methods=['PUT'])
+def update_weapon(weapon_id):
+	''' Updates specified weapon '''
+
+	#checks if given json is correct
+	#TODO need to check if the item exists in database
+	# if len(weapon) == 0:
+	# 	abort(404)
+	if not request.json:
+		abort(400)
+	if 'name' in request.json and type(request.json['name']) is not str:
+		abort(400)
+	if 'description' in request.json and type(request.json['description']) is not str:
+		abort(400)
+	if 'effective' in request.json and type(request.json['effective']) is not list:
+		abort(400)
+	if 'upgrade' in request.json and type(request.json['upgrade']) is not dict:
+		abort(400)
+	if 'might' in request.json and type(request.json['might']) is not int:
+		abort(400)
+	if 'range' in request.json and type(request.json['range']) is not int:
+		abort(400)
+	if 'is_inheritable' in request.json and type(request.json['is_inheritable']) is not bool:
+		abort(400)
+	if 'sp_cost' in request.json and type(request.json['sp_cost']) is not int:
+		abort(400)
+	if 'heroes' in request.json and type(request.json['heroes']) is not list:
+		abort(400)
+
+	#TODO Update the database
+	#TODO return the jsonify object
+
+
+@app.route('/feh/api/v1.0/skills/<int:skill_id>', methods=['PUT'])
+def update_skill(skill_id):
+	''' Updates specified skill '''
+
+	#TODO need to check if the item exists in database
+	# if len(skill) == 0:
+	# 	abort(404)
+	if not request.json:
+		abort(400)
+	if 'name' in request.json and type(request.json['name']) is not str:
+		abort(400)
+	if 'type' in request.json and type(request.json['type']) is not str:
+		abort(400)
+	if 'is_seal_avaliable' in request.json and type(request.json['is_seal_avaliable']) is not bool:
+		abort(400)
+	if 'varients' in request.json and type(request.json['varients']) is not dict:
+		abort(400)
+	if 'heroes' in request.json and type(request.json['heroes']) is not list:
+		abort(400)
+
+	#TODO Update the database
+	#TODO return the jsonify object
+
+
+@app.route('/feh/api/v1.0/assists/<int:assists_id>', methods=['PUT'])
+def update_assist(assists_id):
+	''' Updates specified assist '''
+
+	#TODO need to check if the item exists in database
+	# if len(assist) == 0:
+	# 	abort(404)
+	if not request.json:
+		abort(400)
+	if 'name' in request.json and type(request.json['name']) is not str:
+		abort(400)
+	if 'range' in request.json and type(request.json['range']) is not int:
+		abort(400)
+	if 'sp_cost' in request.json and type(request.json['sp_cost']) is not int:
+		abort(400)
+	if 'description' in request.json and type(request.json['description']) is not str:
+		abort(400)
+	if 'is_inheritable' in request.json and type(request.json['is_inheritable']) is not bool:
+		abort(400)
+	if 'restriction' in request.json and type(request.json['restriction']) is not list:
+		abort(400)
+	if 'heroes' in request.json and type(request.json['heroes']) is not list:
+		abort(400)
+
+	#TODO Update the database
+	#TODO return the jsonify object
+
+
+@app.route('/feh/api/v1.0/specials/<int:special_id>', methods=['PUT'])
+def update_special(special_id):
+	''' Updates specified special '''
+
+	#TODO need to check if the item exists in database
+	# if len(special) == 0:
+	# 	abort(404)
+	if not request.json:
+		abort(400)
+	if 'name' in request.json and type(request.json['name']) is not str:
+		abort(400)
+	if 'cooldown' in request.json and type(request.json['cooldown']) is not int:
+		abort(400)
+	if 'sp_cost' in request.json and type(request.json['sp_cost']) is not int:
+		abort(400)
+	if 'description' in request.json and type(request.json['description']) is not str:
+		abort(400)
+	if 'restriction' in request.json and type(request.json['restriction']) is not list:
+		abort(400)
+	if 'heroes' in request.json and type(request.json['heroes']) is not list:
+		abort(400)
+
+	#TODO Update the database
+	#TODO return the jsonify object
+
+@app.route('/feh/api/v1.0/accessories/<int:accessory_id>', methods=['PUT'])
+def update_accessory(accessory_id):
+	''' Updates specified accessory '''
+
+	#TODO need to check if item exists in database
+	
+	if not request.json:
+		abort(400)
+	if 'name' in request.json and type(request.json['name']) is not str:
+		abort(400)
+	if 'type' in request.json and type(request.json['type']) is not str:
+		abort(400)
+
+
+	#TODO Update the database
+	#TODO return the jsonify object
+
+
+
 
 ##########################
 ''' DELETE FUNCTIONS '''
 ##########################
 
-''' example curl function call 
-curl -X "DELETE" http://127.0.0.1:5000/feh/api/v1.0/heroes/1
-'''
+#example curl function call
+#curl -X "DELETE" http://127.0.0.1:5000/feh/api/v1.0/heroes/1
 
 @app.route('/feh/api/v1.0/heroes/<int:hero_id>', methods=['DELETE'])
 def delete_hero(hero_id):
@@ -344,14 +516,14 @@ def delete_skill(skill_id):
 	remove_skill = skills_col.delete_one({"_id":skill_id})
 	if remove_skill.deleted_count == 0:
 		abort(404)
-	
+
 	return jsonify({'Result':'True'})
 
 
 @app.route('/feh/api/v1.0/assists/<int:assist_id>', methods=['DELETE'])
 def delete_assist(assist_id):
 	''' Remove assist matching specified id '''
-	remove_assist = assists_col.delete_one({"_id":assist_id}) 
+	remove_assist = assists_col.delete_one({"_id":assist_id})
 	if remove_assist.deleted_count == 0:
 		abort(404)
 
